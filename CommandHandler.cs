@@ -26,7 +26,6 @@ public class CommandHandler
     private readonly DiscordSocketClient _client;
     private readonly CommandService _commands;
     private readonly IServiceProvider _services;
-    private readonly Discord.Rest.BaseDiscordClient _baseClient;
 
     public CommandHandler(DiscordSocketClient client, CommandService commands)
     {
