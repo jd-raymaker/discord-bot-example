@@ -8,6 +8,7 @@ class Program {
 
     private readonly DiscordSocketClient _client;
     private readonly CommandHandler _command;
+    private readonly Initialize _service;
 
     private Program()
     {
@@ -19,11 +20,13 @@ class Program {
         var cmdConfig = new CommandServiceConfig
         {
             LogLevel = LogSeverity.Info,
-            CaseSensitiveCommands = false,
-            IgnoreExtraArgs = true
+            CaseSensitiveCommands = false
         };
 
-        _command = new CommandHandler(_client, new CommandService(cmdConfig));
+        var cmdService = new CommandService(cmdConfig);
+        _command = new CommandHandler(_client, cmdService);
+        _service = new Initialize(cmdService, _client);
+        _service.BuildServiceProvider();
 
         _client.Log += Log;
     }
