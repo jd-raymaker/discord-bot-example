@@ -1,4 +1,5 @@
 using System.Reflection;
+using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 
@@ -6,12 +7,14 @@ public class CommandHandler
 {
     private readonly DiscordSocketClient _client;
     private readonly CommandService _commands;
-    private readonly IServiceProvider _services;
 
-    public CommandHandler(DiscordSocketClient client, CommandService commands)
+    public CommandHandler(DiscordSocketClient client, CommandService commands, Func<LogMessage, Task> Log)
     {
         this._client = client;
         this._commands = commands;
+
+        this._client.Log += Log;
+        this._commands.Log += Log;
     }
 
     public async Task InstallCommandsAsync()
@@ -20,7 +23,7 @@ public class CommandHandler
         _client.MessageReceived += HandleCommandAsync;
 
         // Discover all of the command modules in the entry assembly and load them.
-        await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _services);
+        await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: null);
     }
 
     private async Task HandleCommandAsync(SocketMessage messageParam) {

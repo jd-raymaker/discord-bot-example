@@ -8,27 +8,24 @@ class Program {
 
     private readonly DiscordSocketClient _client;
     private readonly CommandHandler _command;
-    private readonly Initialize _service;
+    private readonly CommandService _cmdService;
 
     private Program()
     {
-        _client = new DiscordSocketClient(new DiscordSocketConfig
-        {
-            LogLevel = LogSeverity.Info
-        });
+        _client = new DiscordSocketClient(
+            new DiscordSocketConfig
+            {
+                LogLevel = LogSeverity.Info
+            });
 
-        var cmdConfig = new CommandServiceConfig
-        {
-            LogLevel = LogSeverity.Info,
-            CaseSensitiveCommands = false
-        };
+        _cmdService = new CommandService(
+            new CommandServiceConfig
+            {
+                LogLevel = LogSeverity.Info,
+                CaseSensitiveCommands = false
+            });
 
-        var cmdService = new CommandService(cmdConfig);
-        _command = new CommandHandler(_client, cmdService);
-        _service = new Initialize(cmdService, _client);
-        _service.BuildServiceProvider();
-
-        _client.Log += Log;
+        _command = new CommandHandler(_client, _cmdService, Log);
     }
 
     private async Task MainAsync() {
